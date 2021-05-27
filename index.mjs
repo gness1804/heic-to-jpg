@@ -31,7 +31,7 @@ const makeSuccess = (str) => `${logSymbols.success} ${chalk.green(str)}`;
       `);
       process.exit(0);
     }
-
+// TODO: add tests
     const [, , input] = process.argv;
     if (!input)
       throw new Error(
@@ -49,6 +49,7 @@ const makeSuccess = (str) => `${logSymbols.success} ${chalk.green(str)}`;
     // TODO: adopt for Windows and Linux if trying to publish
     if (stat.isFile()) {
       if (input.match(/(.)\.HEIC$/)) {
+        // TODO: replace fixed outFile with user input; fall back to fixed if no user input
         const outFile = `${input.split('.')[0]}.jpg`;
         try {
           await $`sips -s format jpeg ${input} --out ${outFile}`;
