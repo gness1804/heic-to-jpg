@@ -4,11 +4,18 @@
   "description": "A simple HEIC to jpg converter",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.mjs",
+    "lint": "eslint index.mjs"
   },
   "author": "Graham Nessler",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.1.1",
+    "log-symbols": "^5.0.0",
     "zx": "^1.14.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.27.0",
+    "prettier": "^2.3.0"
   }
 }
