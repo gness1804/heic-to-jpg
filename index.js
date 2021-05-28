@@ -2,7 +2,6 @@
 
 const { promises } =  require('fs');
 const chalk =  require('chalk');
-// const logSymbols =  require('log-symbols');
 const { execSync } = require('child_process');
 const unhandled =  require('cli-handle-unhandled');
 
