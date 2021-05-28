@@ -3,20 +3,13 @@
 const { promises } =  require('fs');
 const chalk =  require('chalk');
 const { execSync } = require('child_process');
-const unhandled =  require('cli-handle-unhandled');
+const init = require('./utils/init')
+const { makeError, makeSuccess } = require('./utils/messages');
 
 const { lstat, readdir } = promises;
 const { bold } = chalk;
 
-const makeError = (str) => `${chalk.bold.red(str)}`;
-const makeSuccess = (str) => ` ${chalk.green(str)}`;
-
-// check node version; fail if before 14
-const currNodeVersion = process.versions.node;
-if (currNodeVersion.split('.')[0] < 14) throw new Error(makeError(`Problem with Node version: this program requires Node version 14.0.0 or higher. You are running version ${currNodeVersion}.`));
-
-// handle unhandled errors
-unhandled();
+init();
 
 /**
  * Converts heic files to jpeg. If argument is directory, converts all heic files in it to jpeg.
