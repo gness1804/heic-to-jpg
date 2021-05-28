@@ -4,16 +4,18 @@
   "description": "A simple HEIC to jpg converter",
   "main": "index.js",
   "bin": {
-    "heic-to-jpg": "index.mjs"
+    "heic-to-jpg": "index.js"
   },
   "scripts": {
-    "start": "node index.mjs",
-    "lint": "eslint index.mjs"
+    "start": "node index.js",
+    "lint": "eslint index.js"
   },
   "author": "Graham Nessler",
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.1",
+    "cli-check-node": "^1.3.4",
+    "cli-handle-unhandled": "^1.1.1",
     "log-symbols": "^5.0.0",
     "zx": "^1.14.0"
   },

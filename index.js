@@ -1,15 +1,23 @@
 #!/usr/bin/env node
 
-import { $ } from 'zx';
-import { promises } from 'fs';
-import chalk from 'chalk';
-import logSymbols from 'log-symbols';
+const { promises } =  require('fs');
+const chalk =  require('chalk');
+// const logSymbols =  require('log-symbols');
+const { execSync } = require('child_process');
+const unhandled =  require('cli-handle-unhandled');
 
 const { lstat, readdir } = promises;
 const { bold } = chalk;
 
-const makeError = (str) => `${logSymbols.error} ${chalk.bold.red(str)}`;
-const makeSuccess = (str) => `${logSymbols.success} ${chalk.green(str)}`;
+const makeError = (str) => `${chalk.bold.red(str)}`;
+const makeSuccess = (str) => ` ${chalk.green(str)}`;
+
+// check node version; fail if before 14
+const currNodeVersion = process.versions.node;
+if (currNodeVersion.split('.')[0] < 14) throw new Error(makeError(`Problem with Node version: this program requires Node version 14.0.0 or higher. You are running version ${currNodeVersion}.`));
+
+// handle unhandled errors
+unhandled();
 
 /**
  * Converts heic files to jpeg. If argument is directory, converts all heic files in it to jpeg.
@@ -52,7 +60,7 @@ const makeSuccess = (str) => `${logSymbols.success} ${chalk.green(str)}`;
         // TODO: replace fixed outFile with user input; fall back to fixed if no user input
         const outFile = `${input.split('.')[0]}.jpg`;
         try {
-          await $`sips -s format jpeg ${input} --out ${outFile}`;
+          execSync(`sips -s format jpeg ${input} --out ${outFile}`);
           console.info(makeSuccess(`Successfully created ${outFile}/`));
         } catch (error) {
           throw new Error(makeError(`Failed to create ${outFile}: ${error}.`));
@@ -75,9 +83,9 @@ const makeSuccess = (str) => `${logSymbols.success} ${chalk.green(str)}`;
       try {
         files.forEach(async (file) => {
           if (file.match(/(.)\.HEIC$/)) {
-            await $`sips -s format jpeg ${fixedInput}/${file} --out ${fixedInput}/${
+            execSync(`sips -s format jpeg ${fixedInput}/${file} --out ${fixedInput}/${
               file.split('.')[0]
-            }.jpg`;
+            }.jpg`);
           }
         });
         console.info(makeSuccess(`Successfully converted all files in ${fixedInput}.`))
