@@ -16,4 +16,4 @@ npx heic-to-jpg
 
 ## Usage
 
-Accepts a single argument: a file or directory path. If a file, converts that file; if a folder, converts all *.HEIC files in it. Will throw if a file type other than *.HEIC is entered or if something other than a valid file or folder path is entered.
+Accepts a single argument: a file or directory path. If a file, converts that file; if a folder, converts all _.HEIC files in it. Will throw if a file type other than _.HEIC is entered or if something other than a valid file or folder path is entered.

@@ -1,15 +1,12 @@
 #!/usr/bin/env node
 
-const { promises } =  require('fs');
-const chalk =  require('chalk');
+const { promises } = require('fs');
+const chalk = require('chalk');
 const { execSync } = require('child_process');
-const init = require('./utils/init')
+const init = require('./utils/init');
 const { makeError, makeSuccess } = require('./utils/messages');
 
 const { lstat, readdir } = promises;
-const { bold } = chalk;
-
-init();
 
 /**
  * Converts heic files to jpeg. If argument is directory, converts all heic files in it to jpeg.
@@ -18,6 +15,10 @@ init();
  */
 
 (async () => {
+  init();
+
+  const { bold } = chalk;
+
   /* eslint-disable no-console */
   try {
     if (process.argv.indexOf('--help') !== -1) {
@@ -31,7 +32,7 @@ init();
       `);
       process.exit(0);
     }
-// TODO: add tests
+    // TODO: add tests
     const [, , input] = process.argv;
     if (!input)
       throw new Error(
@@ -75,12 +76,16 @@ init();
       try {
         files.forEach(async (file) => {
           if (file.match(/(.)\.HEIC$/)) {
-            execSync(`sips -s format jpeg ${fixedInput}/${file} --out ${fixedInput}/${
-              file.split('.')[0]
-            }.jpg`);
+            execSync(
+              `sips -s format jpeg ${fixedInput}/${file} --out ${fixedInput}/${
+                file.split('.')[0]
+              }.jpg`,
+            );
           }
         });
-        console.info(makeSuccess(`Successfully converted all files in ${fixedInput}.`))
+        console.info(
+          makeSuccess(`Successfully converted all files in ${fixedInput}.`),
+        );
       } catch (error) {
         throw new Error(
           makeError(`Failed to parse files in directory: ${error}.`),
