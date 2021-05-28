@@ -34,17 +34,16 @@ const { lstat, readdir } = promises;
     }
     // TODO: add tests
     const [, , input] = process.argv;
-    if (!input)
-      throw new Error(
-        makeError('Input needed. Please enter a valid file or directory name.'),
-      );
+    if (!input) {
+      makeError('Input needed. Please enter a valid file or directory name.');
+    }
 
     let stat;
 
     try {
       stat = await lstat(input);
     } catch (error) {
-      throw new Error(makeError(`Failed to parse ${input}: ${error}.`));
+      makeError(`Failed to parse ${input}: ${error}.`);
     }
 
     // TODO: adopt for Windows and Linux if trying to publish
@@ -56,10 +55,10 @@ const { lstat, readdir } = promises;
           execSync(`sips -s format jpeg ${input} --out ${outFile}`);
           console.info(makeSuccess(`Successfully created ${outFile}/`));
         } catch (error) {
-          throw new Error(makeError(`Failed to create ${outFile}: ${error}.`));
+          makeError(`Failed to create ${outFile}: ${error}.`);
         }
       } else {
-        throw new Error(makeError('File path must be of type .HEIC.'));
+        makeError('File path must be of type .HEIC.');
       }
     } else if (stat.isDirectory()) {
       // remove any trailing slash
@@ -70,9 +69,9 @@ const { lstat, readdir } = promises;
       try {
         files = await readdir(fixedInput);
       } catch (error) {
-        throw new Error(makeError(`Failed to read directory: ${error}.`));
+        makeError(`Failed to read directory: ${error}.`);
       }
-
+      // TODO: handle case of no HEIC files
       try {
         files.forEach(async (file) => {
           if (file.match(/(.)\.HEIC$/)) {
@@ -87,12 +86,10 @@ const { lstat, readdir } = promises;
           makeSuccess(`Successfully converted all files in ${fixedInput}.`),
         );
       } catch (error) {
-        throw new Error(
-          makeError(`Failed to parse files in directory: ${error}.`),
-        );
+        makeError(`Failed to parse files in directory: ${error}.`);
       }
     } else {
-      throw new Error('Error: argument needs to be a .HEIC file or directory.');
+      makeError('Error: argument needs to be a .HEIC file or directory.');
     }
   } catch (err) {
     console.error(err);
