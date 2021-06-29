@@ -19,6 +19,7 @@ const { lstat, readdir } = promises;
 
   const { bold } = chalk;
 
+  // TODO: add meow to improve
   /* eslint-disable no-console */
   try {
     if (process.argv.indexOf('--help') !== -1) {
