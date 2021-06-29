@@ -10,7 +10,8 @@
     "start": "node index.js",
     "lint": "eslint .",
     "prettier:check": "prettier --check .",
-    "prettier:write": "prettier --write ."
+    "prettier:write": "prettier --write .",
+    "test": "ava"
   },
   "pre-commit": [
     "lint",
@@ -21,9 +22,11 @@
   "dependencies": {
     "chalk": "^4.1.1",
     "cli-handle-error": "^4.4.0",
-    "cli-handle-unhandled": "^1.1.1"
+    "cli-handle-unhandled": "^1.1.1",
+    "execa": "^5.1.1"
   },
   "devDependencies": {
+    "ava": "^3.15.0",
     "eslint": "^7.27.0",
     "pre-commit": "^1.2.2",
     "prettier": "^2.3.0"
