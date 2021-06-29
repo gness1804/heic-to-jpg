@@ -8,20 +8,17 @@
   },
   "scripts": {
     "start": "node index.js",
-    "lint": "eslint .",
-    "prettier:check": "prettier --check .",
-    "prettier:write": "prettier --write .",
+    "lint": "eslint . && prettier --check .",
+    "fix": "eslint --fix . && prettier --write .",
     "test": "ava"
   },
   "pre-commit": [
-    "lint",
-    "prettier:check"
+    "lint"
   ],
   "author": "Graham Nessler",
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.1",
-    "cli-handle-error": "^4.4.0",
     "cli-handle-unhandled": "^1.1.1",
     "execa": "^5.1.1",
     "rimraf": "^3.0.2"

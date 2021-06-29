@@ -4,7 +4,7 @@ const { promises } = require('fs');
 const chalk = require('chalk');
 const { execSync } = require('child_process');
 const init = require('./utils/init');
-const { makeError, makeSuccess } = require('./utils/messages');
+const { makeSuccess } = require('./utils/messages');
 
 const { lstat, readdir } = promises;
 
@@ -19,7 +19,6 @@ const { lstat, readdir } = promises;
 
   const { bold } = chalk;
 
-  // TODO: add meow to improve
   /* eslint-disable no-console */
   try {
     if (process.argv.indexOf('--help') !== -1) {
@@ -33,10 +32,12 @@ const { lstat, readdir } = promises;
       `);
       process.exit(0);
     }
-    // TODO: add tests
+
     const [, , input] = process.argv;
     if (!input) {
-      makeError('Input needed. Please enter a valid file or directory name.');
+      throw new Error(
+        'Input needed. Please enter a valid file or directory name.',
+      );
     }
 
     let stat;
@@ -44,22 +45,20 @@ const { lstat, readdir } = promises;
     try {
       stat = await lstat(input);
     } catch (error) {
-      makeError(`Failed to parse ${input}: ${error}.`);
+      throw new Error(`Failed to parse ${input}: ${error}.`);
     }
 
-    // TODO: adopt for Windows and Linux if trying to publish
     if (stat.isFile()) {
       if (input.match(/(.)\.HEIC$/)) {
-        // TODO: replace fixed outFile with user input; fall back to fixed if no user input
         const outFile = `${input.split('.')[0]}.jpg`;
         try {
           execSync(`sips -s format jpeg ${input} --out ${outFile}`);
           console.info(makeSuccess(`Successfully created ${outFile}/`));
         } catch (error) {
-          makeError(`Failed to create ${outFile}: ${error}.`);
+          throw new Error(`Failed to create ${outFile}: ${error}.`);
         }
       } else {
-        makeError('File path must be of type .HEIC.');
+        throw new Error('File path must be of type .HEIC.');
       }
     } else if (stat.isDirectory()) {
       // remove any trailing slash
@@ -70,9 +69,9 @@ const { lstat, readdir } = promises;
       try {
         files = await readdir(fixedInput);
       } catch (error) {
-        makeError(`Failed to read directory: ${error}.`);
+        throw new Error(`Failed to read directory: ${error}.`);
       }
-      // TODO: handle case of no HEIC files
+      // TODO: handle case of no HEIC files. https://github.com/gness1804/heic-to-jpg/issues/5
       try {
         files.forEach(async (file) => {
           if (file.match(/(.)\.HEIC$/)) {
@@ -87,10 +86,10 @@ const { lstat, readdir } = promises;
           makeSuccess(`Successfully converted all files in ${fixedInput}.`),
         );
       } catch (error) {
-        makeError(`Failed to parse files in directory: ${error}.`);
+        throw new Error(`Failed to parse files in directory: ${error}.`);
       }
     } else {
-      makeError('Error: argument needs to be a .HEIC file or directory.');
+      throw new Error('Error: argument needs to be a .HEIC file or directory.');
     }
   } catch (err) {
     console.error(err);
