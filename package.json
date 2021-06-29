@@ -10,7 +10,11 @@
     "start": "node index.js",
     "lint": "eslint . && prettier --check .",
     "fix": "eslint --fix . && prettier --write .",
-    "test": "ava"
+    "test": "ava",
+    "changelog": "auto-changelog -p && git add CHANGELOG.md",
+    "tag:patch": "npm version patch && npm run changelog",
+    "tag:minor": "npm version minor && npm run changelog",
+    "tag:major": "npm version major && npm run changelog"
   },
   "pre-commit": [
     "lint"
@@ -18,6 +22,7 @@
   "author": "Graham Nessler",
   "license": "ISC",
   "dependencies": {
+    "auto-changelog": "^2.3.0",
     "chalk": "^4.1.1",
     "cli-handle-unhandled": "^1.1.1",
     "execa": "^5.1.1",
