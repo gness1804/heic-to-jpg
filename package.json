@@ -23,7 +23,8 @@
     "chalk": "^4.1.1",
     "cli-handle-error": "^4.4.0",
     "cli-handle-unhandled": "^1.1.1",
-    "execa": "^5.1.1"
+    "execa": "^5.1.1",
+    "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "ava": "^3.15.0",
