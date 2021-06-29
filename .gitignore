@@ -121,4 +121,6 @@ dist
 # DS Store
 .DS_Store
 # project-specific files
+fixtures/heics/*.jpg
+fixtures/heics/*.jpeg
 
