@@ -1,58 +1,47 @@
 #!/usr/bin/env node
 
-const { promises } = require('fs');
-const chalk = require('chalk');
-const { execSync } = require('child_process');
-const init = require('./utils/init');
-const { makeSuccess } = require('./utils/messages');
-
-const { lstat, readdir } = promises;
-
 /**
  * Converts heic files to jpeg. If argument is directory, converts all heic files in it to jpeg.
  * @see https://apple.stackexchange.com/questions/297134/how-to-convert-a-heif-heic-image-to-jpeg-in-el-capitan
- * @param {string} input - input file or directory.
  */
+
+const { promises } = require('fs');
+const { execSync } = require('child_process');
+const init = require('./utils/init');
+const { makeSuccess } = require('./utils/messages');
+const cli = require('./utils/cli');
+
+const { lstat, readdir } = promises;
+
+const { flags, input, showHelp } = cli;
+const { source } = flags;
 
 (async () => {
   init();
 
-  const { bold } = chalk;
+  if (input.includes('help')) showHelp(0);
+
+  if (!source) {
+    throw new Error(
+      'Input needed. Please enter a valid file or directory name.',
+    );
+  }
 
   /* eslint-disable no-console */
   try {
-    if (process.argv.indexOf('--help') !== -1) {
-      console.info(`
-        Converts HEIC image file(s) into the more usable jp(e)g format.
-
-        Arguments:
-          1. ${bold(
-            'input',
-          )}: either a *.HEIC file or a folder. If a file, converts that file; if a folder, converts all *.HEIC files in it. Will throw if a file type other than *.HEIC is entered or if something other than a valid file or folder path is entered.
-      `);
-      process.exit(0);
-    }
-
-    const [, , input] = process.argv;
-    if (!input) {
-      throw new Error(
-        'Input needed. Please enter a valid file or directory name.',
-      );
-    }
-
     let stat;
 
     try {
-      stat = await lstat(input);
+      stat = await lstat(source);
     } catch (error) {
-      throw new Error(`Failed to parse ${input}: ${error}.`);
+      throw new Error(`Failed to parse ${source}: ${error}.`);
     }
 
     if (stat.isFile()) {
-      if (input.match(/(.)\.HEIC$/)) {
-        const outFile = `${input.split('.')[0]}.jpg`;
+      if (source.match(/(.)\.HEIC$/)) {
+        const outFile = `${source.split('.')[0]}.jpg`;
         try {
-          execSync(`sips -s format jpeg ${input} --out ${outFile}`);
+          execSync(`sips -s format jpeg ${source} --out ${outFile}`);
           console.info(makeSuccess(`Successfully created ${outFile}/`));
         } catch (error) {
           throw new Error(`Failed to create ${outFile}: ${error}.`);
@@ -62,12 +51,12 @@ const { lstat, readdir } = promises;
       }
     } else if (stat.isDirectory()) {
       // remove any trailing slash
-      const fixedInput = input.replace(/\/$/, '');
+      const fixedSource = source.replace(/\/$/, '');
 
       let files;
 
       try {
-        files = await readdir(fixedInput);
+        files = await readdir(fixedSource);
       } catch (error) {
         throw new Error(`Failed to read directory: ${error}.`);
       }
@@ -76,14 +65,14 @@ const { lstat, readdir } = promises;
         files.forEach(async (file) => {
           if (file.match(/(.)\.HEIC$/)) {
             execSync(
-              `sips -s format jpeg ${fixedInput}/${file} --out ${fixedInput}/${
+              `sips -s format jpeg ${fixedSource}/${file} --out ${fixedSource}/${
                 file.split('.')[0]
               }.jpg`,
             );
           }
         });
         console.info(
-          makeSuccess(`Successfully converted all files in ${fixedInput}.`),
+          makeSuccess(`Successfully converted all files in ${fixedSource}.`),
         );
       } catch (error) {
         throw new Error(`Failed to parse files in directory: ${error}.`);
