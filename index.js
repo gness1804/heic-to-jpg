@@ -8,13 +8,14 @@
 const { promises } = require('fs');
 const { execSync } = require('child_process');
 const init = require('./utils/init');
-const { makeSuccess } = require('./utils/messages');
 const cli = require('./utils/cli');
+const log = require('./utils/log');
+const { makeSuccess } = require('./utils/messages');
 
 const { lstat, readdir } = promises;
 
 const { flags, input, showHelp } = cli;
-const { source } = flags;
+const { source, debug } = flags;
 
 (async () => {
   init();
@@ -29,6 +30,7 @@ const { source } = flags;
 
   /* eslint-disable no-console */
   try {
+    debug && log(flags);
     let stat;
 
     try {
@@ -64,6 +66,7 @@ const { source } = flags;
       try {
         files.forEach(async (file) => {
           if (file.match(/(.)\.HEIC$/)) {
+            // TODO: use execa
             execSync(
               `sips -s format jpeg ${fixedSource}/${file} --out ${fixedSource}/${
                 file.split('.')[0]
