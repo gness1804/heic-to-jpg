@@ -6,16 +6,19 @@
  */
 
 const { promises } = require('fs');
-const { execSync } = require('child_process');
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
-const { makeSuccess } = require('./utils/messages');
+const execa = require('execa');
+const ora = require('ora');
+const { yellow, green } = require('chalk');
 
 const { lstat, readdir } = promises;
 
 const { flags, input, showHelp } = cli;
 const { source, debug } = flags;
+
+const spinner = ora({ text: '' });
 
 (async () => {
   init();
@@ -28,7 +31,6 @@ const { source, debug } = flags;
     );
   }
 
-  /* eslint-disable no-console */
   try {
     debug && log(flags);
     let stat;
@@ -43,8 +45,9 @@ const { source, debug } = flags;
       if (source.match(/(.)\.HEIC$/)) {
         const outFile = `${source.split('.')[0]}.jpg`;
         try {
-          execSync(`sips -s format jpeg ${source} --out ${outFile}`);
-          console.info(makeSuccess(`Successfully created ${outFile}/`));
+          spinner.start(yellow('Converting your file...'));
+          await execa.command(`sips -s format jpeg ${source} --out ${outFile}`);
+          spinner.succeed(green(`Successfully created ${outFile}/`));
         } catch (error) {
           throw new Error(`Failed to create ${outFile}: ${error}.`);
         }
@@ -64,18 +67,18 @@ const { source, debug } = flags;
       }
       // TODO: handle case of no HEIC files. https://github.com/gness1804/heic-to-jpg/issues/5
       try {
-        files.forEach(async (file) => {
+        spinner.start(yellow('Converting your files...'));
+        for (const file of files) {
           if (file.match(/(.)\.HEIC$/)) {
-            // TODO: use execa
-            execSync(
+            await execa.command(
               `sips -s format jpeg ${fixedSource}/${file} --out ${fixedSource}/${
                 file.split('.')[0]
               }.jpg`,
             );
           }
-        });
-        console.info(
-          makeSuccess(`Successfully converted all files in ${fixedSource}.`),
+        }
+        spinner.succeed(
+          green(`Successfully converted all files in ${fixedSource}.`),
         );
       } catch (error) {
         throw new Error(`Failed to parse files in directory: ${error}.`);
@@ -84,6 +87,7 @@ const { source, debug } = flags;
       throw new Error('Error: argument needs to be a .HEIC file or directory.');
     }
   } catch (err) {
+    /*eslint-disable-next-line no-console */
     console.error(err);
   }
 })();

@@ -8,6 +8,7 @@ const program = path.join(__dirname, '../index.js');
 
 test.beforeEach(() => {
   rimraf(path.join(__dirname, 'fixtures/*.jpg'), () => {
+    /*eslint-disable-next-line no-console */
     console.info('Removed jpg files from fixtures.');
   });
 });

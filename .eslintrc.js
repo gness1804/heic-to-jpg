@@ -6,7 +6,7 @@ module.exports = {
   },
   extends: ['eslint:recommended'],
   rules: {
-    'no-console': 'warn',
+    'no-console': 'error',
   },
   env: {
     browser: true,
