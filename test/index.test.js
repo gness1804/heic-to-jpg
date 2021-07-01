@@ -50,3 +50,13 @@ test('converts all HEICs in a valid directory', async (t) => {
   t.true(fs.existsSync(file2));
   t.true(fs.existsSync(file3));
 });
+
+test('shows a warning if no HEIC files are in the directory given', async (t) => {
+  const source = path.join(__dirname, 'no-heics/');
+  const { stdout } = await execa('node', [program, '-s', source]);
+  t.true(
+    stdout.includes(
+      'Whoops, no HEIC files in this directory. Please try again.',
+    ),
+  );
+});

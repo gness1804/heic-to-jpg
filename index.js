@@ -11,6 +11,7 @@ const cli = require('./utils/cli');
 const log = require('./utils/log');
 const execa = require('execa');
 const ora = require('ora');
+const alert = require('cli-alerts');
 const { yellow, green } = require('chalk');
 
 const { lstat, readdir } = promises;
@@ -65,9 +66,10 @@ const spinner = ora({ text: '' });
       } catch (error) {
         throw new Error(`Failed to read directory: ${error}.`);
       }
-      // TODO: handle case of no HEIC files. https://github.com/gness1804/heic-to-jpg/issues/5
+
       try {
         spinner.start(yellow('Converting your files...'));
+        let heics = 0;
         for (const file of files) {
           if (file.match(/(.)\.HEIC$/)) {
             await execa.command(
@@ -75,7 +77,17 @@ const spinner = ora({ text: '' });
                 file.split('.')[0]
               }.jpg`,
             );
+            heics++;
           }
+        }
+        if (heics === 0) {
+          spinner.stop();
+          alert({
+            type: 'warning',
+            name: 'No HEICS',
+            msg: 'Whoops, no HEIC files in this directory. Please try again.',
+          });
+          process.exit(0);
         }
         spinner.succeed(
           green(`Successfully converted all files in ${fixedSource}.`),
