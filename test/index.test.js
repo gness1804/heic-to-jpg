@@ -37,6 +37,13 @@ describe('HEIC to jpg converter', () => {
     expect(fs.existsSync(res)).toBe(true);
   });
 
+  it('converts a valid HEIC to jpg for an input file with multiple dots', async () => {
+    const source = path.join(__dirname, 'fixtures/ahc-pic-bad.new.HEIC');
+    await execa('node', [program, '-s', source]);
+    const res = path.join(__dirname, 'fixtures/ahc-pic-bad.new.jpg');
+    expect(fs.existsSync(res)).toBe(true);
+  });
+
   it('fails if non-HEIC file argument given', async () => {
     const source = path.join(__dirname, 'fixtures/nope.md');
     const { stderr } = await execa('node', [program, '-s', source]);
@@ -52,11 +59,7 @@ describe('HEIC to jpg converter', () => {
     const file2 = path.join(__dirname, 'fixtures/ahc-pic-bad.jpg');
     const file3 = path.join(__dirname, 'fixtures/enchanted-rock.jpg');
 
-    const files = [
-      file1,
-      file2,
-      file3,
-    ];
+    const files = [file1, file2, file3];
 
     for (const file of files) {
       expect(fs.existsSync(file)).toBe(true);
@@ -66,6 +69,10 @@ describe('HEIC to jpg converter', () => {
   it('shows a warning if no HEIC files are in the directory given', async () => {
     const source = path.join(__dirname, 'no-heics/');
     const { stdout } = await execa('node', [program, '-s', source]);
-    expect((stdout).includes('Whoops, no HEIC files in this directory. Please try again.')).toBe(true);
+    expect(
+      stdout.includes(
+        'Whoops, no HEIC files in this directory. Please try again.',
+      ),
+    ).toBe(true);
   });
 });
