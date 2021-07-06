@@ -12,7 +12,7 @@ const log = require('./utils/log');
 const execa = require('execa');
 const ora = require('ora');
 const alert = require('cli-alerts');
-const { yellow, green } = require('chalk');
+const { yellow, green, red } = require('chalk');
 
 const { lstat, readdir } = promises;
 
@@ -44,12 +44,13 @@ const spinner = ora({ text: '' });
 
     if (stat.isFile()) {
       if (source.match(/(.)\.HEIC$/)) {
-        const outFile = `${source.split('.')[0]}.jpg`;
+        const outFile = source.replace(/.HEIC$/, '.jpg');
         try {
           spinner.start(yellow('Converting your file...'));
           await execa.command(`sips -s format jpeg ${source} --out ${outFile}`);
           spinner.succeed(green(`Successfully created ${outFile}/`));
         } catch (error) {
+          spinner.fail(red(`File conversion failed.`));
           throw new Error(`Failed to create ${outFile}: ${error}.`);
         }
       } else {
