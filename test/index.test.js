@@ -36,4 +36,36 @@ describe('HEIC to jpg converter', () => {
     const res = path.join(__dirname, 'fixtures/ahc_pic_1.jpg');
     expect(fs.existsSync(res)).toBe(true);
   });
+
+  it('fails if non-HEIC file argument given', async () => {
+    const source = path.join(__dirname, 'fixtures/nope.md');
+    const { stderr } = await execa('node', [program, '-s', source]);
+    expect(stderr.includes('File path must be of type .HEIC.')).toBe(true);
+  });
+
+  it('converts all HEICs in a valid directory', async () => {
+    // run the program against the parent directory
+    const source = path.join(__dirname, 'fixtures/');
+    await execa('node', [program, '-s', source]);
+
+    const file1 = path.join(__dirname, 'fixtures/ahc_pic_1.jpg');
+    const file2 = path.join(__dirname, 'fixtures/ahc-pic-bad.jpg');
+    const file3 = path.join(__dirname, 'fixtures/enchanted-rock.jpg');
+
+    const files = [
+      file1,
+      file2,
+      file3,
+    ];
+
+    for (const file of files) {
+      expect(fs.existsSync(file)).toBe(true);
+    }
+  });
+
+  it('shows a warning if no HEIC files are in the directory given', async () => {
+    const source = path.join(__dirname, 'no-heics/');
+    const { stdout } = await execa('node', [program, '-s', source]);
+    expect((stdout).includes('Whoops, no HEIC files in this directory. Please try again.')).toBe(true);
+  });
 });
