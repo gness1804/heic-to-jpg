@@ -20,14 +20,14 @@ describe('HEIC to jpg converter', () => {
 
     expect(
       stdout.includes(
-        'Error: Input needed. Please enter a valid file or directory name.\n',
+        'Input needed. Please enter a valid file or directory name.\n',
       ),
     ).toBe(true);
   });
 
   it('fails if bad argument given (not a file or directory)', async () => {
-    const { stderr } = await execa('node', [program, '-s', 'foo/bar']);
-    expect(stderr.includes('Failed to parse foo/bar')).toBe(true);
+    const { stdout } = await execa('node', [program, '-s', 'foo/bar']);
+    expect(stdout.includes('Failed to parse foo/bar')).toBe(true);
   });
 
   it('converts a valid HEIC to jpg', async () => {
@@ -46,8 +46,8 @@ describe('HEIC to jpg converter', () => {
 
   it('fails if non-HEIC file argument given', async () => {
     const source = path.join(__dirname, 'fixtures/nope.md');
-    const { stderr } = await execa('node', [program, '-s', source]);
-    expect(stderr.includes('File path must be of type .HEIC.')).toBe(true);
+    const { stdout } = await execa('node', [program, '-s', source]);
+    expect(stdout.includes('File path must be of type .HEIC.')).toBe(true);
   });
 
   it('converts all HEICs in a valid directory', async () => {

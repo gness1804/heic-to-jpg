@@ -6,6 +6,7 @@
  */
 
 const { promises } = require('fs');
+const handleError = require('cli-handle-error');
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
@@ -27,8 +28,11 @@ const spinner = ora({ text: '' });
   if (input.includes('help')) showHelp(0);
 
   if (!source) {
-    throw new Error(
+    handleError(
       'Input needed. Please enter a valid file or directory name.',
+      { message: 'Input needed. Please enter a valid file or directory name.' },
+      true,
+      true,
     );
   }
 
@@ -39,7 +43,7 @@ const spinner = ora({ text: '' });
     try {
       stat = await lstat(source);
     } catch (error) {
-      throw new Error(`Failed to parse ${source}: ${error}.`);
+      handleError(`Failed to parse ${source}`, error, true, true);
     }
 
     if (stat.isFile()) {
@@ -51,10 +55,15 @@ const spinner = ora({ text: '' });
           spinner.succeed(green(`Successfully created ${outFile}/`));
         } catch (error) {
           spinner.fail(red(`File conversion failed.`));
-          throw new Error(`Failed to create ${outFile}: ${error}.`);
+          handleError(`Failed to create ${outFile}.`, error, true, true);
         }
       } else {
-        throw new Error('File path must be of type .HEIC.');
+        handleError(
+          'File path must be of type .HEIC.',
+          { message: 'File path must be of type .HEIC.' },
+          true,
+          true,
+        );
       }
     } else if (stat.isDirectory()) {
       // remove any trailing slash
@@ -65,7 +74,7 @@ const spinner = ora({ text: '' });
       try {
         files = await readdir(fixedSource);
       } catch (error) {
-        throw new Error(`Failed to read directory: ${error}.`);
+        handleError('Failed to read directory.', error, true, true);
       }
 
       try {
@@ -94,13 +103,17 @@ const spinner = ora({ text: '' });
           green(`Successfully converted all files in ${fixedSource}.`),
         );
       } catch (error) {
-        throw new Error(`Failed to parse files in directory: ${error}.`);
+        handleError('Failed to parse files in directory.', error, true, true);
       }
     } else {
-      throw new Error('Error: argument needs to be a .HEIC file or directory.');
+      handleError(
+        'Error: argument needs to be a .HEIC file or directory.',
+        { message: 'Error: argument needs to be a .HEIC file or directory.' },
+        true,
+        true,
+      );
     }
-  } catch (err) {
-    /*eslint-disable-next-line no-console */
-    console.error(err);
+  } catch (error) {
+    handleError('General error:', error, true, true);
   }
 })();
