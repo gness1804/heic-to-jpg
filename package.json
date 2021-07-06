@@ -1,6 +1,6 @@
 {
   "name": "heic-to-jpg",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "A simple HEIC to jpg converter.  Converts .HEIC image file(s) into the more usable .jpg format.",
   "main": "index.js",
   "bin": {
