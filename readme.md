@@ -40,6 +40,6 @@ help  Print help info
 
 ## Changelog
 
-[❯ Read the changelog here →](CHANGELOG.md)
+[❯ Read the changelog here →](https://github.com/gness1804/heic-to-jpg/blob/master/CHANGELOG.md)
 
 
