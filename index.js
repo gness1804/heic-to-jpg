@@ -47,8 +47,8 @@ const spinner = ora({ text: '' });
     }
 
     if (stat.isFile()) {
-      if (source.match(/(.)\.HEIC$/)) {
-        const outFile = source.replace(/.HEIC$/, '.jpg');
+      if (source.match(/(.)\.HEIC$/i)) {
+        const outFile = source.replace(/.HEIC$/i, '.jpg');
         try {
           spinner.start(yellow('Converting your file...'));
           await execa.command(`sips -s format jpeg ${source} --out ${outFile}`);
@@ -81,7 +81,7 @@ const spinner = ora({ text: '' });
         spinner.start(yellow('Converting your files...'));
         let heics = 0;
         for (const file of files) {
-          if (file.match(/(.)\.HEIC$/)) {
+          if (file.match(/(.)\.HEIC$/i)) {
             await execa.command(
               `sips -s format jpeg ${fixedSource}/${file} --out ${fixedSource}/${
                 file.split('.')[0]

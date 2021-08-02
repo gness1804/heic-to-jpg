@@ -37,6 +37,13 @@ describe('HEIC to jpg converter', () => {
     expect(fs.existsSync(res)).toBe(true);
   });
 
+  it('converts a valid HEIC to jpg (heic extension in lower case)', async () => {
+    const source = path.join(__dirname, 'fixtures/ahc_pic_2.heic');
+    await execa('node', [program, '-s', source]);
+    const res = path.join(__dirname, 'fixtures/ahc_pic_2.jpg');
+    expect(fs.existsSync(res)).toBe(true);
+  });
+
   it('converts a valid HEIC to jpg for an input file with multiple dots', async () => {
     const source = path.join(__dirname, 'fixtures/ahc-pic-bad.new.HEIC');
     await execa('node', [program, '-s', source]);
@@ -56,10 +63,11 @@ describe('HEIC to jpg converter', () => {
     await execa('node', [program, '-s', source]);
 
     const file1 = path.join(__dirname, 'fixtures/ahc_pic_1.jpg');
-    const file2 = path.join(__dirname, 'fixtures/ahc-pic-bad.jpg');
-    const file3 = path.join(__dirname, 'fixtures/enchanted-rock.jpg');
+    const file2 = path.join(__dirname, 'fixtures/ahc_pic_2.jpg');
+    const file3 = path.join(__dirname, 'fixtures/ahc-pic-bad.jpg');
+    const file4 = path.join(__dirname, 'fixtures/enchanted-rock.jpg');
 
-    const files = [file1, file2, file3];
+    const files = [file1, file2, file3, file4];
 
     for (const file of files) {
       expect(fs.existsSync(file)).toBe(true);
