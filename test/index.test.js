@@ -26,41 +26,41 @@ describe('HEIC to jpg converter', () => {
   });
 
   it('fails if bad argument given (not a file or directory)', async () => {
-    const { stdout } = await execa('node', [program, '-s', 'foo/bar']);
+    const { stdout } = await execa('node', [program, 'foo/bar']);
     expect(stdout.includes('Failed to parse foo/bar')).toBe(true);
   });
 
   it('converts a valid HEIC to jpg', async () => {
     const source = path.join(__dirname, 'fixtures/ahc_pic_1.HEIC');
-    await execa('node', [program, '-s', source]);
+    await execa('node', [program, source]);
     const res = path.join(__dirname, 'fixtures/ahc_pic_1.jpg');
     expect(fs.existsSync(res)).toBe(true);
   });
 
   it('converts a valid HEIC to jpg (heic extension in lower case)', async () => {
     const source = path.join(__dirname, 'fixtures/ahc_pic_2.heic');
-    await execa('node', [program, '-s', source]);
+    await execa('node', [program, source]);
     const res = path.join(__dirname, 'fixtures/ahc_pic_2.jpg');
     expect(fs.existsSync(res)).toBe(true);
   });
 
   it('converts a valid HEIC to jpg for an input file with multiple dots', async () => {
     const source = path.join(__dirname, 'fixtures/ahc-pic-bad.new.HEIC');
-    await execa('node', [program, '-s', source]);
+    await execa('node', [program, source]);
     const res = path.join(__dirname, 'fixtures/ahc-pic-bad.new.jpg');
     expect(fs.existsSync(res)).toBe(true);
   });
 
   it('fails if non-HEIC file argument given', async () => {
     const source = path.join(__dirname, 'fixtures/nope.md');
-    const { stdout } = await execa('node', [program, '-s', source]);
+    const { stdout } = await execa('node', [program, source]);
     expect(stdout.includes('File path must be of type .HEIC.')).toBe(true);
   });
 
   it('converts all HEICs in a valid directory', async () => {
     // run the program against the parent directory
     const source = path.join(__dirname, 'fixtures/');
-    await execa('node', [program, '-s', source]);
+    await execa('node', [program, source]);
 
     const file1 = path.join(__dirname, 'fixtures/ahc_pic_1.jpg');
     const file2 = path.join(__dirname, 'fixtures/ahc_pic_2.jpg');
@@ -76,7 +76,7 @@ describe('HEIC to jpg converter', () => {
 
   it('shows a warning if no HEIC files are in the directory given', async () => {
     const source = path.join(__dirname, 'no-heics/');
-    const { stdout } = await execa('node', [program, '-s', source]);
+    const { stdout } = await execa('node', [program, source]);
     expect(
       stdout.includes(
         'Whoops, no HEIC files in this directory. Please try again.',
