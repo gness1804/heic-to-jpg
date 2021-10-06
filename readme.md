@@ -24,6 +24,10 @@ npx heic-to-jpg
 heic-to-jpg  <command> [option]
 ```
 
+Enter in a file name or directory as the first argument and the app will convert it.
+
+*heic-to-jpg example.HEIC -> example.jpg*
+
 ### COMMANDS
 
 ```sh
@@ -35,7 +39,6 @@ help  Print help info
 ```sh
 -d, --debug    Print debug info Default: false
 -v, --version  Print CLI version Default: false
--s, --source   Must be either a *.HEIC file or a folder. If a file, converts that file to *.jpg; if a folder, converts all *.HEIC files in it. Will throw if a file type other than *.HEIC is entered or if something other than a valid file or folder path is entered. Default: false
 ```
 
 ## Changelog

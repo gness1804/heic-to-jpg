@@ -28,8 +28,7 @@ const helpText = meowHelp({
   ${pkg.description}
 
   Enter in a file name or directory as the first argument and the app will convert it.
-  Example: 'heic-to-jpg example.HEIC'
-  (creates heic-to-jpg example.jpg)
+  heic-to-jpg example.HEIC -> example.jpg
   `,
   flags,
   commands,
