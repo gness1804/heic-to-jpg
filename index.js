@@ -18,7 +18,7 @@ const { yellow, green, red } = require('chalk');
 const { lstat, readdir } = promises;
 
 const { flags, input, showHelp } = cli;
-const { source, debug } = flags;
+const { debug } = flags;
 
 const spinner = ora({ text: '' });
 
@@ -27,18 +27,21 @@ const spinner = ora({ text: '' });
 
   if (input.includes('help')) showHelp(0);
 
-  if (!source) {
-    handleError(
-      'Input needed. Please enter a valid file or directory name.',
-      { message: 'Input needed. Please enter a valid file or directory name.' },
-      true,
-      true,
-    );
-  }
-
   try {
     debug && log(flags);
     let stat;
+
+    const source = process.argv[2];
+    if (!source) {
+      handleError(
+        'Input needed. Please enter a valid file or directory name.',
+        {
+          message: 'Input needed. Please enter a valid file or directory name.',
+        },
+        true,
+        true,
+      );
+    }
 
     try {
       stat = await lstat(source);

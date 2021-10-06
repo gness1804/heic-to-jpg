@@ -14,11 +14,6 @@ const flags = {
     alias: 'v',
     desc: 'Print CLI version.',
   },
-  source: {
-    type: 'string',
-    alias: 's',
-    desc: 'Must be either a *.HEIC file or a folder. If a file, converts that file to *.jpg; if a folder, converts all *.HEIC files in it. Will throw if a file type other than *.HEIC is entered or if something other than a valid file or folder path is entered.',
-  },
 };
 
 const commands = {
@@ -29,7 +24,13 @@ const commands = {
 
 const helpText = meowHelp({
   name: `npx ${pkg.name}`,
-  desc: pkg.description,
+  desc: `
+  ${pkg.description}
+
+  Enter in a file name or directory as the first argument and the app will convert it.
+  Example: 'heic-to-jpg example.HEIC'
+  (creates heic-to-jpg example.jpg)
+  `,
   flags,
   commands,
 });
