@@ -7,10 +7,11 @@
     "heic-to-jpg": "index.js"
   },
   "scripts": {
-    "start": "ts-node index.ts",
-    "start:compiled": "node index.js",
-    "ts-emit": "tsc index.ts",
-    "lint": "eslint . && prettier --check \"./**/*.{js,json}\"",
+    "execute": "ts-node index.ts",
+    "execute:compiled": "node index.js",
+    "start": "tsc --watch",
+    "compile": "tsc *.ts utils/*.ts",
+    "lint": "eslint *.ts && prettier --check \"./**/*.{js,json}\"",
     "fix": "eslint --fix . && prettier --write \"./**/*.{js,json}\"",
     "test": "jest",
     "changelog": "auto-changelog -p -l 8 && git add CHANGELOG.md",
@@ -19,8 +20,7 @@
     "tag:major": "npm version major && npm run changelog"
   },
   "pre-commit": [
-    "lint",
-    "test"
+    "lint"
   ],
   "author": "Graham Nessler",
   "license": "ISC",

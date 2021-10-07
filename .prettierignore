@@ -9,4 +9,4 @@ node_modules
 # webpack.config.js
 tsconfig.json
 # project-specific files
-index.js
+*.js

@@ -5,15 +5,15 @@
  * @see https://apple.stackexchange.com/questions/297134/how-to-convert-a-heif-heic-image-to-jpeg-in-el-capitan
  */
 
-const { promises } = require('fs');
-const handleError = require('cli-handle-error');
+import { promises } from 'fs';
+import handleError from 'cli-handle-error';
+import execa from 'execa';
+import ora from 'ora';
+import alert from 'cli-alerts';
+import { yellow, green, red } from 'chalk';
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
-const execa = require('execa');
-const ora = require('ora');
-const _alert = require('cli-alerts');
-const { yellow, green, red } = require('chalk');
 
 const { lstat, readdir } = promises;
 
@@ -27,96 +27,104 @@ const spinner = ora({ text: '' });
 
   if (input.includes('help')) showHelp(0);
 
+  debug && log(flags);
+  let stat;
+
+  const source = process.argv[2];
+  if (!source) {
+    handleError(
+      'Input needed. Please enter a valid file or directory name.',
+      {
+        message: 'Input needed. Please enter a valid file or directory name.',
+        name: '',
+      },
+      true,
+      true,
+    );
+  }
+
   try {
-    debug && log(flags);
-    let stat;
+    stat = await lstat(source);
+  } catch (error) {
+    handleError(`Failed to parse ${source}`, error as Error, true, true);
+  }
 
-    const source = process.argv[2];
-    if (!source) {
-      handleError(
-        'Input needed. Please enter a valid file or directory name.',
-        {
-          message: 'Input needed. Please enter a valid file or directory name.',
-        },
-        true,
-        true,
-      );
-    }
+  if (!stat)
+    throw new Error(`Error parsing file: ${source}. Please try again later.`);
 
-    try {
-      stat = await lstat(source);
-    } catch (error) {
-      handleError(`Failed to parse ${source}`, error, true, true);
-    }
-
-    if (stat.isFile()) {
-      if (source.match(/(.)\.HEIC$/i)) {
-        const outFile = source.replace(/.HEIC$/i, '.jpg');
-        try {
-          spinner.start(yellow('Converting your file...'));
-          await execa.command(`sips -s format jpeg ${source} --out ${outFile}`);
-          spinner.succeed(green(`Successfully created ${outFile}/`));
-        } catch (error) {
-          spinner.fail(red(`File conversion failed.`));
-          handleError(`Failed to create ${outFile}.`, error, true, true);
-        }
-      } else {
-        handleError(
-          'File path must be of type .HEIC.',
-          { message: 'File path must be of type .HEIC.' },
-          true,
-          true,
-        );
-      }
-    } else if (stat.isDirectory()) {
-      // remove any trailing slash
-      const fixedSource = source.replace(/\/$/, '');
-
-      let files;
-
+  if (stat.isFile()) {
+    if (source.match(/(.)\.HEIC$/i)) {
+      const outFile = source.replace(/.HEIC$/i, '.jpg');
       try {
-        files = await readdir(fixedSource);
+        spinner.start(yellow('Converting your file...'));
+        await execa.command(`sips -s format jpeg ${source} --out ${outFile}`);
+        spinner.succeed(green(`Successfully created ${outFile}/`));
       } catch (error) {
-        handleError('Failed to read directory.', error, true, true);
-      }
-
-      try {
-        spinner.start(yellow('Converting your files...'));
-        let heics = 0;
-        for (const file of files) {
-          if (file.match(/(.)\.HEIC$/i)) {
-            await execa.command(
-              `sips -s format jpeg ${fixedSource}/${file} --out ${fixedSource}/${
-                file.split('.')[0]
-              }.jpg`,
-            );
-            heics++;
-          }
-        }
-        if (heics === 0) {
-          spinner.stop();
-          alert({
-            type: 'warning',
-            name: 'No HEICS',
-            msg: 'Whoops, no HEIC files in this directory. Please try again.',
-          });
-          process.exit(0);
-        }
-        spinner.succeed(
-          green(`Successfully converted all files in ${fixedSource}.`),
-        );
-      } catch (error) {
-        handleError('Failed to parse files in directory.', error, true, true);
+        spinner.fail(red(`File conversion failed.`));
+        handleError(`Failed to create ${outFile}.`, error as Error, true, true);
       }
     } else {
       handleError(
-        'Error: argument needs to be a .HEIC file or directory.',
-        { message: 'Error: argument needs to be a .HEIC file or directory.' },
+        'File path must be of type .HEIC.',
+        { message: 'File path must be of type .HEIC.', name: '' },
         true,
         true,
       );
     }
-  } catch (error) {
-    handleError('General error:', error, true, true);
+  } else if (stat.isDirectory()) {
+    // remove any trailing slash
+    const fixedSource = source.replace(/\/$/, '');
+
+    let files: string[] = [];
+
+    try {
+      files = await readdir(fixedSource);
+    } catch (error) {
+      handleError('Failed to read directory.', error as Error, true, true);
+    }
+
+    try {
+      spinner.start(yellow('Converting your files...'));
+      let heics = 0;
+      for (const file of files) {
+        if (file.match(/(.)\.HEIC$/i)) {
+          await execa.command(
+            `sips -s format jpeg ${fixedSource}/${file} --out ${fixedSource}/${
+              file.split('.')[0]
+            }.jpg`,
+          );
+          heics++;
+        }
+      }
+      if (heics === 0) {
+        spinner.stop();
+        alert({
+          type: 'warning',
+          name: 'No HEICS',
+          msg: 'Whoops, no HEIC files in this directory. Please try again.',
+        });
+        process.exit(0);
+      }
+      spinner.succeed(
+        green(`Successfully converted all files in ${fixedSource}.`),
+      );
+    } catch (error) {
+      handleError(
+        'Failed to parse files in directory.',
+        error as Error,
+        true,
+        true,
+      );
+    }
+  } else {
+    handleError(
+      'Error: argument needs to be a .HEIC file or directory.',
+      {
+        message: 'Error: argument needs to be a .HEIC file or directory.',
+        name: '',
+      },
+      true,
+      true,
+    );
   }
 })();
