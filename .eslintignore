@@ -11,6 +11,7 @@ coverage
 package.json
 README.md
 # webpack.config.js
+tsconfig.json
 .prettierrc.json
 # project-specific custom files
-
+index.js
