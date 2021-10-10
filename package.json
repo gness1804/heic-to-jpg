@@ -11,9 +11,7 @@
     "exec:compiled": "node index.js",
     "start": "tsc *.ts utils/*.ts --resolveJsonModule --esModuleInterop --watch",
     "compile": "tsc *.ts utils/*.ts --resolveJsonModule --esModuleInterop",
-    "lint": "eslint *.ts && prettier --check \"./**/*.{ts}\"",
     "lint:types": "tsc --noEmit",
-    "fix": "eslint --fix . && prettier --write \"./**/*.{ts}\"",
     "test": "jest",
     "changelog": "auto-changelog -p -l 8 && git add CHANGELOG.md",
     "tag:patch": "npm version patch && npm run changelog",
@@ -21,7 +19,6 @@
     "tag:major": "npm version major && npm run changelog"
   },
   "pre-commit": [
-    "lint",
     "lint:types"
   ],
   "author": "Graham Nessler",
@@ -44,7 +41,6 @@
     "update-notifier": "^5.1.0"
   },
   "devDependencies": {
-    "eslint": "^7.27.0",
     "pre-commit": "^1.2.2",
     "prettier": "^2.3.0"
   }
