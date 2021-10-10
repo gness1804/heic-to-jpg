@@ -7,9 +7,9 @@
 
 import { promises } from 'fs';
 import handleError from 'cli-handle-error';
-import execa from 'execa';
-import ora from 'ora';
-import alert from 'cli-alerts';
+import execa = require('execa');
+import ora = require('ora');
+import alert = require('cli-alerts');
 import { yellow, green, red } from 'chalk';
 const init = require('./utils/init');
 const cli = require('./utils/cli');

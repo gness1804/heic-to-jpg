@@ -1,4 +1,4 @@
-import alert from 'cli-alerts';
+import alert = require('cli-alerts');
 
 module.exports = (info: any) => {
   alert({

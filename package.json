@@ -9,8 +9,8 @@
   "scripts": {
     "exec": "ts-node index.ts",
     "exec:compiled": "node index.js",
-    "start": "tsc --watch",
-    "compile": "tsc *.ts utils/*.ts",
+    "start": "tsc *.ts utils/*.ts --resolveJsonModule --esModuleInterop --watch",
+    "compile": "tsc *.ts utils/*.ts --resolveJsonModule --esModuleInterop",
     "lint": "eslint *.ts && prettier --check \"./**/*.{ts}\"",
     "lint:types": "tsc --noEmit",
     "fix": "eslint --fix . && prettier --write \"./**/*.{ts}\"",

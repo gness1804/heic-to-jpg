@@ -5,6 +5,6 @@ interface Options {
 }
 
 declare module 'cli-alerts' {
-  declare const alert: (options: Options) => void;
+  const alert: (options: Options) => void;
   export = alert;
 }
